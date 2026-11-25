@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // ---------- Utility ----------
@@ -37,7 +38,7 @@ function mostraErrore(testo) {
 
 // ---------- REGISTRAZIONE (register.html) ----------
 
-const formRegistrazione = document.getElementById("form-registrazione");
+const formRegistrazione = document.getElementById("form-register");
 
 if (formRegistrazione) {
   formRegistrazione.addEventListener("submit", async (e) => {
@@ -47,7 +48,7 @@ if (formRegistrazione) {
     const cognome = document.getElementById("cognome").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
-    const password2 = document.getElementById("password2").value;
+    const password2 = document.getElementById("confirm-password").value;
 
     if (!nome || !cognome) {
       mostraErrore("Inserisci nome e cognome.");
@@ -86,6 +87,37 @@ if (formLogin) {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       window.location.href = "setup-casa.html";
+    } catch (error) {
+      console.error(error);
+      mostraErrore(messaggioErrore(error.code));
+    }
+  });
+}
+
+// ---------- PASSWORD DIMENTICATA (index.html) ----------
+
+const linkReset = document.getElementById("link-reset");
+
+if (linkReset) {
+  linkReset.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+
+    if (!email) {
+      mostraErrore("Inserisci prima la tua email nel campo qui sopra.");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      const errBox = document.getElementById("errore");
+      if (errBox) errBox.style.display = "none";
+
+      const okBox = document.getElementById("successo");
+      if (okBox) {
+        okBox.textContent = "Email di recupero inviata! Controlla la posta (anche nello spam).";
+        okBox.style.display = "block";
+      }
     } catch (error) {
       console.error(error);
       mostraErrore(messaggioErrore(error.code));
