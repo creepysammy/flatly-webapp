@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS utenti (
+    firebase_uid VARCHAR(128) PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cognome VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    consenso_privacy_il TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
